@@ -1,8 +1,40 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "bdconverter.h"
+
+char *B2D(char *binary, char *decimal) {
+	int size = 0;
+	int number = 0;
+
+	for (int i = 0; i < strlen(binary); i++) {
+		number += (binary[strlen(binary) - i - 1] - '0') * pow(2, i);
+	}
+
+	int temp = number;
+	while (temp > 0) {
+		temp /= 10;
+		size++;
+	}
+
+	decimal = (char*)malloc(sizeof(char) * (size + 1));
+	memset(decimal, 0, size+1);
+
+	sprintf(decimal, "%d", number);
+	return decimal;
+}
+
+void ShowB2D(char *binary) {
+	int length = 4;
+	char *decimal;
+
+	printf("BIN %s = %s\n", binary, B2D(binary, decimal));
+	free(decimal);
+	ShowD2B(binary);
+}
+
 
 char *D2B(char *number, char *binary, int length) {
 	int capacity = length;
@@ -48,8 +80,6 @@ char *D2B(char *number, char *binary, int length) {
 
 		for (int i = 0; i < size; i++) {
 			temp[i] = binary[i+capacity - size];
-//			printf("size=%d temp[%d]=%c\n", size, i, temp[i]); 
-//			printf("binary[%d]=%c\n", i+start, binary[i+capacity - size]); 
 		}
 
 		free(binary);
@@ -65,53 +95,5 @@ void ShowD2B(char *number) {
 
 	printf("DEC %s = %s\n", number, D2B(number, binary, length));
 	free(binary);
-}
-
-/*
-void ShowD2B(char *number) {
-	int capacity = 4, size = 0;
-	int length = capacity;
-	char *binary = (char*)malloc(sizeof(char) * (capacity+1));
-	memset(binary, '0', capacity+1);
-
-	int decimal = 0;
-	sscanf(number, "%d", &decimal);
-	binary[length--] = '\0';
-
-	while (decimal > 0) {
-		int space = capacity/4-1;
-		if ((size+1)%5 == 0) {
-			binary[length--] = ',';
-		}
-		binary[length--] = decimal % 2 + '0';
-		decimal /= 2;
-		size++;
-//printf("binary[%d]=%c\n", length+1, binary[length+1]);
-		if (size >= capacity) {
-			capacity *= 2;
-			char *temp = (char*)malloc(sizeof(char) * (capacity+1 + space));
-			int start = size + space;
-
-			for (int i = 0; i < capacity + space; i++) {
-				if (i >= start) {
-					temp[i] = binary[i-start];
-				} else {
-					temp[i] = '0';
-				}
-			}
-
-			free(binary);
-			binary = temp;
-			length = size-1;
-			printf("temp: %s\n", temp);
-		}
-//		printf("size=%d decimal=%d %s\n", size, decimal, binary);
-	}
-
-	printf("DEC %s = %s\n", number, binary);
-	free(binary);
-}
-*/
-void ShowB2D(char *binary) {
 }
 
